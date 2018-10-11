@@ -230,7 +230,9 @@ export default {
   },
 
   created() {
-    this.reloadData()
+    this.$nextTick(() => {
+      this.reloadData()
+    })
   },
 
   watch: {
