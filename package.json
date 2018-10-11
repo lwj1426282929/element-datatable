@@ -1,6 +1,6 @@
 {
   "name": "element-datatable",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "description": "基于element-ui的表格插件，支持所有element-ui的属性和方法，可以接受本地数据和ajax参数异步请求服务器数据",
   "author": "lwj_grape",
   "private": false,
@@ -10,6 +10,10 @@
     "start": "npm run dev",
     "lint": "eslint --ext .js,.vue src",
     "build": "node build/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lwj1426282929/element-datatable.git"
   },
   "dependencies": {
     "axios": "^0.18.0",
