@@ -15,7 +15,9 @@ import axios from "axios"
 import ElColumn from './el-column'
 
 const qs = require("qs")
-const $http = axios.create()
+const $http = axios.create({
+  timeout: 900000
+})
 
 // 处理URL
 function translateAjax(ajax) {
