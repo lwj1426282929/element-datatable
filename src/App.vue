@@ -21,7 +21,7 @@ export default {
         endTime: '2018-10-11 23:59:59'
       },
       ajax: {
-        url: 'ind/target/query', // 也可以直接写http地址
+        url: 'ind/target/query_123', // 也可以直接写http地址
         method: 'post', // 默认get请求
         data: { // data
           target_name: 'get_xd_handon_count_index'

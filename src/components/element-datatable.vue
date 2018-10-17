@@ -61,7 +61,7 @@ export default {
     },
     checkedProp: { // 当type为selection时有效，指定默认选中属性
       type: [String, Function],
-      default:() => ''
+      default: () => ''
     },
     selectAbleProp: { // type为selection时有效能否选择
       type: String
@@ -266,8 +266,7 @@ export default {
   methods: {
     // 加载数据
     reloadData() {
-      console.log('当前页：', this.currentPage_);
-      if(this.currentPage !== this.currentPage_){
+      if (this.currentPage !== this.currentPage_) {
         this.currentPage = this.currentPage_
       }
       if (this.data) {
@@ -332,8 +331,16 @@ export default {
             this.loadingCount = 0;
           }
         }).catch(error => {
-          throw new Error(error)
+          let res = error.response;
+          let configData = JSON.parse(res.config.data);
+          let message = '代码：' + res.data.status + '</br>消息：' + res.data.message + '</br>' + configData['target_name'];
+          this.$notify.error({
+            title: '错误',
+            message,
+            dangerouslyUseHTMLString: true
+          });
           this.loadingCount = 0;
+          throw new Error(error);
         })
       }
     },
@@ -350,7 +357,7 @@ export default {
           })
         } else { // 传入的是函数
           this.tableData.forEach((item, index) => {
-            this.$refs.table.toggleRowSelection( this.tableData[index], this.checkedProp(item, index))
+            this.$refs.table.toggleRowSelection(this.tableData[index], this.checkedProp(item, index))
           })
         }
       }

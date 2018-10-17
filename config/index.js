@@ -11,7 +11,12 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable:{
-      
+      '/ind': {
+        target: 'http://10.1.241.150:8082', //源地址 操作质量分析报表
+        changeOrigin: false, //改变源
+        xfwd: true,
+        autoRewrite: true,
+      }
     },
 
     // Various Dev Server settings
