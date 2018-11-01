@@ -321,7 +321,7 @@ export default {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
           if (res.data.success || res.data.code == '200') { // 返回成功
-            this.tableData = res.data.data.tbody
+            this.tableData = res.data.data.tbody || []
             this.total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
             this.$nextTick(() => {
               this.defaultChecked()
