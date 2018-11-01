@@ -16,7 +16,7 @@ import ElColumn from './el-column'
 
 const qs = require("qs")
 const $http = axios.create({
-  timeout: 900000
+  timeout: 120000
 })
 
 // 处理URL
@@ -320,9 +320,9 @@ export default {
       } else {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
-          if (res.data.success) { // 返回成功
+          if (res.data.success || res.data.code == '200') { // 返回成功
             this.tableData = res.data.data.tbody
-            this.total = res.data.data.page.count
+            this.total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
             this.$nextTick(() => {
               this.defaultChecked()
             })
@@ -331,15 +331,15 @@ export default {
             this.loadingCount = 0;
           }
         }).catch(error => {
-          let res = error.response;
-          let configData = JSON.parse(res.config.data);
-          let message = '代码：' + res.data.status + '</br>消息：' + res.data.message + '</br>' + configData['target_name'];
-          this.$notify.error({
-            title: '错误',
-            message,
-            dangerouslyUseHTMLString: true
-          });
-          this.loadingCount = 0;
+          // let res = error.response;
+          // let configData = JSON.parse(res.config.data);
+          // let message = '代码：' + res.data.status + '</br>消息：' + res.data.message + '</br>' + configData['target_name'];
+          // this.$notify.error({
+          //   title: '错误',
+          //   message,
+          //   dangerouslyUseHTMLString: true
+          // });
+          // this.loadingCount = 0;
           throw new Error(error);
         })
       }
@@ -349,16 +349,20 @@ export default {
     defaultChecked() {
       if (this.checkedProp) {
         if (typeof (this.checkedProp) === 'string') { // 传入的是字符串
-          this.tableData.forEach((item, index) => {
-            this.$refs.table.toggleRowSelection(
-              this.tableData[index],
-              item[this.checkedProp] || false
-            )
-          })
+          if (this.tableData.length) {
+            this.tableData.forEach((item, index) => {
+              this.$refs.table.toggleRowSelection(
+                this.tableData[index],
+                item[this.checkedProp] || false
+              )
+            })
+          }
         } else { // 传入的是函数
-          this.tableData.forEach((item, index) => {
-            this.$refs.table.toggleRowSelection(this.tableData[index], this.checkedProp(item, index))
-          })
+          if (this.tableData.length) {
+            this.tableData.forEach((item, index) => {
+              this.$refs.table.toggleRowSelection(this.tableData[index], this.checkedProp(item, index))
+            })
+          }
         }
       }
 
