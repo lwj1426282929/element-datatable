@@ -3,7 +3,6 @@
     <el-table :data="tableData" :height="height" :max-height="maxHeight" :stripe="stripe" :border="border" :size="size" :fit="fit" :show-header="showHeader" :highlight-current-row="highlightCurrentRow" :current-row-key="currentRowKey" :row-class-name="rowClassName" :row-style="rowStyle" :cell-class-name="cellClassName" :cell-style="cellStyle" :header-row-class-name="headerRowClassName" :header-row-style="headerRowStyle" :header-cell-class-name="headerCellClassName" :header-cell-style="headerCellStyle" :row-key="rowKey" :empty-text="emptyText" :default-expand-all="defaultExpandAll" :expand-row-keys="expandRowKeys" :default-sort="defaultSort" :tooltip-effect="tooltipEffect" :show-summary="showSummary" :sum-text="sumText" :summary-method="summaryMethod" :span-method="spanMethod" :select-on-indeterminate="selectOnIndeterminate" @select="onSelect" @select-all="onSelectAll" @selection-change="onSelectionChange" @cell-mouse-enter="onCellMouseEnter" @cell-mouse-leave="onCellMouseLeave" @cell-click="onCellClick" @cell-dblclick="onCellDblclick" @row-click="onRowClick" @row-contextmenu="onRowContextmenu" @row-dblclick="onRowDblclick" @header-click="onHeaderClick" @header-contextmenu="onHeaderContextmenu" @sort-change="onSortChange" @filter-change="onFilterChange" @current-change="onCurrentRowChange" @header-dragend="onHeaderDragend" @expand-change="onExpandChange" ref="table">
       <slot name="first" />
       <el-column v-for="(item, index) in columnAttributes" :key="index" :selectable="selectable" :item="item" />
-      <slot name="last" />
       <slot />
     </el-table>
     <el-pagination :small="small" :background="background" :page-size="pageSize" :total="total" :page-count="pageCount" :pager-count="pagerCount" :current-page="currentPage" :layout="layout" :page-sizes="pageSizes" :popper-class="popperClass" :prev-text="prevText" :next-text="nextText" :disabled="disabled" @size-change="onSizeChange" @current-change="onCurrentChange" @prev-click="onPrevClick" @next-click="onNextClick" />
@@ -65,6 +64,10 @@ export default {
     },
     selectAbleProp: { // type为selection时有效能否选择
       type: String
+    },
+    createdUnload: {
+      type: Boolean,
+      default: () => false
     },
 
     // el-table 属性
@@ -232,9 +235,11 @@ export default {
   },
 
   created() {
-    this.$nextTick(() => {
-      this.reloadData()
-    })
+    if (!this.createdUnload) {
+      this.$nextTick(() => {
+        this.reloadData()
+      })
+    }
   },
 
   watch: {
