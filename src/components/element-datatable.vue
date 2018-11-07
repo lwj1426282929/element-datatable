@@ -345,7 +345,7 @@ export default {
             this.tableData = res.data.data[this.dataKey] || []
             // this.tableData = res.data.data.list
             let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
-            this.total = res.data.data[this.totalKey] || total
+            this.total = res.data.data[this.totalKey] || total || 0
             this.$nextTick(() => {
               this.defaultChecked()
             })
