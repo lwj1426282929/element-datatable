@@ -343,7 +343,6 @@ export default {
         $http(translateAjax(ajax)).then(res => {
           if (res.data.success || res.data.code == '200') { // 返回成功
             this.tableData = res.data.data[this.dataKey] || []
-            // this.tableData = res.data.data.list
             let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
             this.total = res.data.data[this.totalKey] || total || 0
             this.$nextTick(() => {
@@ -352,17 +351,32 @@ export default {
             this.loadingCount = 0;
           } else { // 返回失败
             this.loadingCount = 0;
+            let code = res.data.code || res.data.status || ''
+            let res_message = res.data.message || res.data.msg || ''
+            let message = '代码：' + code.toString().replace(/\s/g, "") + '<br /> 消息：' + res_message.toString().replace(/\s/g, "");
+            this.$notify.error({
+              title: '错误',
+              message,
+              duration: 0,
+              customClass: 'error-notify',
+              dangerouslyUseHTMLString: true
+            });
           }
-        }).catch(error => {
-          // let res = error.response;
-          // let configData = JSON.parse(res.config.data);
-          // let message = '代码：' + res.data.status + '</br>消息：' + res.data.message + '</br>' + configData['target_name'];
-          // this.$notify.error({
-          //   title: '错误',
-          //   message,
-          //   dangerouslyUseHTMLString: true
-          // });
-          // this.loadingCount = 0;
+        }).catch((error) => {
+          this.loadingCount = 0;
+          console.log(error.response)
+          let code = error.response.status
+          let res_message = error.response.statusText
+          console.log(code)
+          console.log(res_message)
+          let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
+          this.$notify.error({
+            title: '错误',
+            duration: 0,
+            message,
+            customClass: 'error-notify',
+            dangerouslyUseHTMLString: true
+          });
           throw new Error(error);
         })
       }
@@ -479,8 +493,13 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .el-table {
   margin-bottom: 8px;
+}
+</style>
+<style>
+.error-notify .el-notification__content p {
+  text-align: left;
 }
 </style>
