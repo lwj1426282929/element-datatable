@@ -357,22 +357,17 @@ export default {
             this.$notify.error({
               title: '错误',
               message,
-              duration: 0,
               customClass: 'error-notify',
               dangerouslyUseHTMLString: true
             });
           }
         }).catch((error) => {
           this.loadingCount = 0;
-          console.log(error.response)
           let code = error.response.status
           let res_message = error.response.statusText
-          console.log(code)
-          console.log(res_message)
           let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
           this.$notify.error({
             title: '错误',
-            duration: 0,
             message,
             customClass: 'error-notify',
             dangerouslyUseHTMLString: true
