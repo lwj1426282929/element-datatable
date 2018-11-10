@@ -5,7 +5,7 @@
       <el-column v-for="(item, index) in columnAttributes" :key="index" :selectable="selectable" :item="item" />
       <slot />
     </el-table>
-    <el-pagination :small="small" :background="background" :page-size="pageSize" :total="total" :page-count="pageCount" :pager-count="pagerCount" :current-page="currentPage" :layout="layout" :page-sizes="pageSizes" :popper-class="popperClass" :prev-text="prevText" :next-text="nextText" :disabled="disabled" @size-change="onSizeChange" @current-change="onCurrentChange" @prev-click="onPrevClick" @next-click="onNextClick" />
+    <el-pagination :small="small" :background="background" :page-size="pageSize" :total="total" :page-count="pageCount" :pager-count="pagerCount" :current-page.sync="currentPage" :layout="layout" :page-sizes="pageSizes" :popper-class="popperClass" :prev-text="prevText" :next-text="nextText" :disabled="disabled" @size-change="onSizeChange" @current-change="onCurrentChange" @prev-click="onPrevClick" @next-click="onNextClick" />
   </div>
 </template>
 
@@ -265,6 +265,10 @@ export default {
       },
       deep: true,
       immediate: true
+    },
+    currentPage(page) {
+      this.currentPage_ = page
+      this.loadAjaxData();
     },
     serverParams: {
       handler(val) {
