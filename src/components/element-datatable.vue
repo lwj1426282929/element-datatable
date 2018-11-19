@@ -290,14 +290,14 @@ export default {
 
   methods: {
     // 加载数据
-    reloadData() {
+    reloadData(val) {
       if (this.currentPage !== this.currentPage_) {
         this.currentPage = this.currentPage_
       }
       if (this.data) {
         this.loadLocalData()
       } else if (this.ajax) {
-        this.loadAjaxData()
+        this.loadAjaxData(val)
       }
     },
 
@@ -317,7 +317,7 @@ export default {
     },
 
     // 加载服务器数据
-    loadAjaxData() {
+    loadAjaxData(searchObj) {
       let ajax = {
         url: '',
         method: 'get' // 默认get请求方式
@@ -327,16 +327,16 @@ export default {
       // 改造ajax参数
       if (typeof (this.ajax) === 'string') { // String 类型,只有get请求方式
         ajax.url = this.ajax
-        ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.serverParams)
+        ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.serverParams, searchObj)
       } else { // Object 类型, 默认get请求方式
         if (!this.ajax.url) {
           throw new Error('url can not be empty!')
         }
         ajax = Object.assign({}, ajax, this.ajax)
         if (ajax.method.toLowerCase() === 'get') { // get请求
-          ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.serverParams)
+          ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.serverParams, searchObj)
         } else { // post 请求
-          ajax.data = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.ajax.data, this.serverParams)
+          ajax.data = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.ajax.data, this.serverParams, searchObj)
         }
       }
 
@@ -367,8 +367,8 @@ export default {
           }
         }).catch((error) => {
           this.loadingCount = 0;
-          let code = error.response.status
-          let res_message = error.response.statusText
+          let code = error.response.status || ''
+          let res_message = error.response.statusText || ''
           let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
           this.$notify.error({
             title: '错误',
