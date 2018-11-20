@@ -346,6 +346,7 @@ export default {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
           if (res.data.success || res.data.code == '200') { // 返回成功
+            res.data.data = res.data.data || {}
             this.tableData = res.data.data[this.dataKey] || []
             let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
             this.total = res.data.data[this.totalKey] || total || 0
@@ -367,16 +368,19 @@ export default {
           }
         }).catch((error) => {
           this.loadingCount = 0;
-          let code = error.response.status || ''
-          let res_message = error.response.statusText || ''
-          let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
-          this.$notify.error({
-            title: '错误',
-            message,
-            customClass: 'error-notify',
-            dangerouslyUseHTMLString: true
-          });
-          throw new Error(error);
+          if (!(error.response.status < 300)) {
+            error.response = error.response || {}
+            let code = error.response.status || ''
+            let res_message = error.response.statusText || ''
+            let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
+            this.$notify.error({
+              title: '错误',
+              message,
+              customClass: 'error-notify',
+              dangerouslyUseHTMLString: true
+            });
+            throw new Error(error);
+          }
         })
       }
     },
