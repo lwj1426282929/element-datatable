@@ -1,11 +1,76 @@
 <template>
   <div v-loading="showLoading && loadingCount > 0">
-    <el-table :data="tableData" :height="height" :max-height="maxHeight" :stripe="stripe" :border="border" :size="size" :fit="fit" :show-header="showHeader" :highlight-current-row="highlightCurrentRow" :current-row-key="currentRowKey" :row-class-name="rowClassName" :row-style="rowStyle" :cell-class-name="cellClassName" :cell-style="cellStyle" :header-row-class-name="headerRowClassName" :header-row-style="headerRowStyle" :header-cell-class-name="headerCellClassName" :header-cell-style="headerCellStyle" :row-key="rowKey" :empty-text="emptyText" :default-expand-all="defaultExpandAll" :expand-row-keys="expandRowKeys" :default-sort="defaultSort" :tooltip-effect="tooltipEffect" :show-summary="showSummary" :sum-text="sumText" :summary-method="summaryMethod" :span-method="spanMethod" :select-on-indeterminate="selectOnIndeterminate" @select="onSelect" @select-all="onSelectAll" @selection-change="onSelectionChange" @cell-mouse-enter="onCellMouseEnter" @cell-mouse-leave="onCellMouseLeave" @cell-click="onCellClick" @cell-dblclick="onCellDblclick" @row-click="onRowClick" @row-contextmenu="onRowContextmenu" @row-dblclick="onRowDblclick" @header-click="onHeaderClick" @header-contextmenu="onHeaderContextmenu" @sort-change="onSortChange" @filter-change="onFilterChange" @current-change="onCurrentRowChange" @header-dragend="onHeaderDragend" @expand-change="onExpandChange" ref="table">
+    <el-table :data="tableData"
+              :height="height"
+              :max-height="maxHeight"
+              :stripe="stripe"
+              :border="border"
+              :size="size"
+              :fit="fit"
+              :show-header="showHeader"
+              :highlight-current-row="highlightCurrentRow"
+              :current-row-key="currentRowKey"
+              :row-class-name="rowClassName"
+              :row-style="rowStyle"
+              :cell-class-name="cellClassName"
+              :cell-style="cellStyle"
+              :header-row-class-name="headerRowClassName"
+              :header-row-style="headerRowStyle"
+              :header-cell-class-name="headerCellClassName"
+              :header-cell-style="headerCellStyle"
+              :row-key="rowKey"
+              :empty-text="emptyText"
+              :default-expand-all="defaultExpandAll"
+              :expand-row-keys="expandRowKeys"
+              :default-sort="defaultSort"
+              :tooltip-effect="tooltipEffect"
+              :show-summary="showSummary"
+              :sum-text="sumText"
+              :summary-method="summaryMethod"
+              :span-method="spanMethod"
+              :select-on-indeterminate="selectOnIndeterminate"
+              @select="onSelect"
+              @select-all="onSelectAll"
+              @selection-change="onSelectionChange"
+              @cell-mouse-enter="onCellMouseEnter"
+              @cell-mouse-leave="onCellMouseLeave"
+              @cell-click="onCellClick"
+              @cell-dblclick="onCellDblclick"
+              @row-click="onRowClick"
+              @row-contextmenu="onRowContextmenu"
+              @row-dblclick="onRowDblclick"
+              @header-click="onHeaderClick"
+              @header-contextmenu="onHeaderContextmenu"
+              @sort-change="onSortChange"
+              @filter-change="onFilterChange"
+              @current-change="onCurrentRowChange"
+              @header-dragend="onHeaderDragend"
+              @expand-change="onExpandChange"
+              ref="table">
       <slot name="first" />
-      <el-column v-for="(item, index) in columnAttributes" :key="index" :selectable="selectable" :item="item" />
+      <el-column v-for="(item, index) in columnAttributes"
+                 :key="index"
+                 :selectable="selectable"
+                 :item="item" />
       <slot />
     </el-table>
-    <el-pagination :small="small" :background="background" :page-size="pageSize" :total="total" :page-count="pageCount" :pager-count="pagerCount" :current-page.sync="currentPage" :layout="layout" :page-sizes="pageSizes" :popper-class="popperClass" :prev-text="prevText" :next-text="nextText" :disabled="disabled" @size-change="onSizeChange" @current-change="onCurrentChange" @prev-click="onPrevClick" @next-click="onNextClick" />
+    <el-pagination :small="small"
+                   :background="background"
+                   :page-size="pageSize"
+                   :total="total"
+                   :page-count="pageCount"
+                   :pager-count="pagerCount"
+                   :current-page.sync="currentPage"
+                   :layout="layout"
+                   :page-sizes="pageSizes"
+                   :popper-class="popperClass"
+                   :prev-text="prevText"
+                   :next-text="nextText"
+                   :disabled="disabled"
+                   @size-change="onSizeChange"
+                   @current-change="onCurrentChange"
+                   @prev-click="onPrevClick"
+                   @next-click="onNextClick" />
   </div>
 </template>
 
@@ -345,27 +410,35 @@ export default {
       } else {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
-          if (res.data.success || res.data.code == '200') { // 返回成功
-            res.data.data = res.data.data || {}
-            this.tableData = res.data.data[this.dataKey] || []
-            let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
-            this.total = res.data.data[this.totalKey] || total || 0
-            this.$nextTick(() => {
-              this.defaultChecked()
-            })
-            this.loadingCount = 0;
-          } else { // 返回失败
-            this.loadingCount = 0;
-            let code = res.data.code || res.data.status || ''
-            let res_message = res.data.message || res.data.msg || ''
-            let message = '代码：' + code.toString().replace(/\s/g, "") + '<br /> 消息：' + res_message.toString().replace(/\s/g, "");
-            this.$notify.error({
-              title: '错误',
-              message,
-              customClass: 'error-notify',
-              dangerouslyUseHTMLString: true
-            });
-          }
+          res.data.data = res.data.data || {}
+          this.tableData = res.data.data[this.dataKey] || []
+          let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
+          this.total = res.data.data[this.totalKey] || total || 0
+          this.$nextTick(() => {
+            this.defaultChecked()
+          })
+          this.loadingCount = 0;
+          // if (res.data.success || res.data.code == '200' || res.data.code == '0' || res.data.status == '200' || res.data.status == '0') { // 返回成功
+          //   res.data.data = res.data.data || {}
+          //   this.tableData = res.data.data[this.dataKey] || []
+          //   let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
+          //   this.total = res.data.data[this.totalKey] || total || 0
+          //   this.$nextTick(() => {
+          //     this.defaultChecked()
+          //   })
+          //   this.loadingCount = 0;
+          // } else { // 返回失败
+          //   this.loadingCount = 0;
+          //   let code = res.data.code || res.data.status || ''
+          //   let res_message = res.data.message || res.data.msg || ''
+          //   let message = '代码：' + code.toString().replace(/\s/g, "") + '<br /> 消息：' + res_message.toString().replace(/\s/g, "");
+          //   this.$notify.error({
+          //     title: '错误',
+          //     message,
+          //     customClass: 'error-notify',
+          //     dangerouslyUseHTMLString: true
+          //   });
+          // }
         }).catch((error) => {
           this.loadingCount = 0;
           if (!(error.response.status < 300)) {
