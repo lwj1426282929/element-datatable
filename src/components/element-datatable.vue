@@ -333,7 +333,7 @@ export default {
     },
     currentPage(page) {
       this.currentPage_ = page
-      this.loadAjaxData();
+      // this.loadAjaxData();
     },
     serverParams: {
       handler(val) {
