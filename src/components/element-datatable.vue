@@ -410,6 +410,7 @@ export default {
       } else {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
+          this.$emit('loadData', res)
           res.data.data = res.data.data || {}
           this.tableData = res.data.data[this.dataKey] || []
           let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
