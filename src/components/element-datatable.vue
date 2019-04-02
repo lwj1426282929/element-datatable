@@ -392,16 +392,16 @@ export default {
       // 改造ajax参数
       if (typeof (this.ajax) === 'string') { // String 类型,只有get请求方式
         ajax.url = this.ajax
-        ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.serverParams, searchObj)
+        ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, [this.pageSizeKey]: this.pageSize }, draw, this.serverParams, searchObj)
       } else { // Object 类型, 默认get请求方式
         if (!this.ajax.url) {
           throw new Error('url can not be empty!')
         }
         ajax = Object.assign({}, ajax, this.ajax)
         if (ajax.method.toLowerCase() === 'get') { // get请求
-          ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.serverParams, searchObj)
+          ajax.params = Object.assign({}, { [this.pageIndexKey]: this.currentPage, [this.pageSizeKey]: this.pageSize }, draw, this.ajax.params, this.serverParams, searchObj)
         } else { // post 请求
-          ajax.data = Object.assign({}, { [this.pageIndexKey]: this.currentPage, pageSize: this.pageSize }, draw, this.ajax.params, this.ajax.data, this.serverParams, searchObj)
+          ajax.data = Object.assign({}, { [this.pageIndexKey]: this.currentPage, [this.pageSizeKey]: this.pageSize }, draw, this.ajax.params, this.ajax.data, this.serverParams, searchObj)
         }
       }
 
