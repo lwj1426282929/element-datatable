@@ -4,6 +4,8 @@
 >
 > A form plug-in based on element-ui that supports the properties and methods of all element-ui and can accept local data or ajax parameter asynchronous request server data
 
+![](./src/assets/logo.png)
+
 ## 相关依赖 Dependencies
 * [axios](https://github.com/axios/axios), [element-ui](http://element.eleme.io), [qs](https://github.com/ljharb/qs)
 * IE >= 9
