@@ -84,7 +84,7 @@ const $http = axios.create({
 })
 
 // 处理URL
-function translateAjax(ajax) {
+function translateAjax (ajax) {
   let ajax_ = Object.assign({}, ajax)
   if (ajax.method.toLowerCase() === 'post') {
     ajax.data = Object.assign({}, ajax.params, ajax.data)
@@ -259,14 +259,6 @@ export default {
       type: Boolean,
       default: () => false
     },
-    // pageSize: {
-    //   type: Number,
-    //   default: () => 10
-    // },
-    // total: {
-    //   type: Number,
-    //   default: () => null
-    // },
     pageCount: {
       type: Number
     },
@@ -274,10 +266,6 @@ export default {
       type: Number,
       default: () => 7
     },
-    // currentPage: {
-    //   type: Number,
-    //   default: () => 1
-    // },
     layout: {
       type: String,
       default: () => "total, sizes, prev, pager, next, jumper"
@@ -300,7 +288,7 @@ export default {
     }
   },
 
-  data() {
+  data () {
     return {
       draw: 0,
       tableData: [],
@@ -311,11 +299,12 @@ export default {
       loadingCount: 0,
       success: true,
       errorMsg: "error",
-      maxColumnIndex: 0
+      maxColumnIndex: 0,
+      showNotify: false
     }
   },
 
-  created() {
+  created () {
     if (!this.createdUnload) {
       this.$nextTick(() => {
         this.reloadData()
@@ -324,29 +313,19 @@ export default {
   },
 
   watch: {
-    data: {
-      handler(val) {
-        // this.loadLocalData()
-      },
-      deep: true,
-      immediate: true
-    },
-    currentPage(page) {
+    currentPage (page) {
       this.currentPage_ = page
-      // this.loadAjaxData();
     },
     serverParams: {
-      handler(val) {
+      handler (val) {
         this.currentPage_ = 1
-        // this.loadAjaxData()
       },
       deep: true,
       immediate: true
     },
     ajax: {
-      handler(val) {
+      handler (val) {
         this.currentPage_ = 1
-        // this.loadAjaxData()
       },
       deep: true,
       immediate: true
@@ -355,7 +334,7 @@ export default {
 
   methods: {
     // 加载数据
-    reloadData(val) {
+    reloadData (val) {
       if (this.currentPage !== this.currentPage_) {
         this.currentPage = this.currentPage_
       }
@@ -367,7 +346,7 @@ export default {
     },
 
     // 加载本地数据
-    loadLocalData() {
+    loadLocalData () {
       let total = (this.total = this.data.length)
       let max = this.pageSize * this.currentPage
       max = max > total ? total : max
@@ -382,7 +361,7 @@ export default {
     },
 
     // 加载服务器数据
-    loadAjaxData(searchObj) {
+    loadAjaxData (searchObj) {
       let ajax = {
         url: '',
         method: 'get' // 默认get请求方式
@@ -411,56 +390,67 @@ export default {
         this.loadingCount++
         $http(translateAjax(ajax)).then(res => {
           this.$emit('loadData', res)
-          res.data.data = res.data.data || {}
-          this.tableData = res.data.data[this.dataKey] || []
-          let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
-          this.total = res.data.data[this.totalKey] || total || 0
-          this.$nextTick(() => {
-            this.defaultChecked()
-          })
-          this.loadingCount = 0;
-          // if (res.data.success || res.data.code == '200' || res.data.code == '0' || res.data.status == '200' || res.data.status == '0') { // 返回成功
-          //   res.data.data = res.data.data || {}
-          //   this.tableData = res.data.data[this.dataKey] || []
-          //   let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
-          //   this.total = res.data.data[this.totalKey] || total || 0
-          //   this.$nextTick(() => {
-          //     this.defaultChecked()
-          //   })
-          //   this.loadingCount = 0;
-          // } else { // 返回失败
-          //   this.loadingCount = 0;
-          //   let code = res.data.code || res.data.status || ''
-          //   let res_message = res.data.message || res.data.msg || ''
-          //   let message = '代码：' + code.toString().replace(/\s/g, "") + '<br /> 消息：' + res_message.toString().replace(/\s/g, "");
-          //   this.$notify.error({
-          //     title: '错误',
-          //     message,
-          //     customClass: 'error-notify',
-          //     dangerouslyUseHTMLString: true
-          //   });
-          // }
+          // res.data.data = res.data.data || {}
+          // this.tableData = res.data.data[this.dataKey] || []
+          // let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
+          // this.total = res.data.data[this.totalKey] || total || 0
+          // this.$nextTick(() => {
+          //   this.defaultChecked()
+          // })
+          // this.loadingCount = 0;
+          if (res.data.success || res.data.code == '200' || res.data.code == '0' || res.data.status == '200' || res.data.status == '0') { // 返回成功
+            res.data.data = res.data.data || {}
+            this.tableData = res.data.data[this.dataKey] || []
+            let total = res.data.data.page ? res.data.data.page.count : res.data.data.realCount
+            this.total = res.data.data[this.totalKey] || total || 0
+            this.$nextTick(() => {
+              this.defaultChecked()
+            })
+            this.loadingCount = 0;
+          } else { // 返回失败
+            this.loadingCount = 0;
+            let code = res.data.code || res.data.status || ''
+            let res_message = res.data.message || res.data.msg || ''
+            let message = res_message.toString().replace(/\s/g, "");
+
+            if (!this.showNotify) {
+              this.$notify.closeAll()
+              this.showNotify = true
+              let vm = this
+              this.$notify({
+                message,
+                onClose () {
+                  vm.showNotify = false
+                }
+              });
+            }
+          }
         }).catch((error) => {
           this.loadingCount = 0;
           if (!(error.response.status < 300)) {
             error.response = error.response || {}
             let code = error.response.status || ''
             let res_message = error.response.statusText || ''
-            let message = '代码：' + code.toString() + '<br /> 消息：' + res_message.toString();
-            this.$notify.error({
-              title: '错误',
-              message,
-              customClass: 'error-notify',
-              dangerouslyUseHTMLString: true
-            });
-            throw new Error(error);
+            // let message = code.toString() + ' ' + res_message.toString();
+            console.log(this.showNotify)
+            let vm = this
+            if (!this.showNotify) {
+              this.$notify.closeAll()
+              this.showNotify = true
+              this.$notify({
+                message: '网络异常，请稍后重试',
+                onClose () {
+                  vm.showNotify = false
+                }
+              });
+            }
           }
         })
       }
     },
 
     // 默认选中
-    defaultChecked() {
+    defaultChecked () {
       if (this.checkedProp) {
         if (typeof (this.checkedProp) === 'string') { // 传入的是字符串
           if (this.tableData.length) {
@@ -483,7 +473,7 @@ export default {
     },
 
     // 是否可选, 也可以直接在column-attributes里面直接传入
-    selectable(row, index) {
+    selectable (row, index) {
       if (this.selectAbleProp && !row[this.selectAbleProp]) {
         return false
       }
@@ -491,77 +481,77 @@ export default {
     },
 
     /*  表格事件  */
-    onSelect(selection, row) {
+    onSelect (selection, row) {
       this.$emit('select', selection, row)
     },
-    onSelectAll(selection) {
+    onSelectAll (selection) {
       this.$emit("select-all", selection)
     },
-    onSelectionChange(selection) {
+    onSelectionChange (selection) {
       this.$emit("selection-change", selection)
     },
-    onCellMouseEnter(row, column, cell, event) {
+    onCellMouseEnter (row, column, cell, event) {
       this.$emit('cell-mouse-enter', row, column, cell, event)
     },
-    onCellMouseLeave(row, column, cell, event) {
+    onCellMouseLeave (row, column, cell, event) {
       this.$emit('cell-mouse-leave', row, column, cell, event)
     },
-    onCellClick(row, column, cell, event) {
+    onCellClick (row, column, cell, event) {
       this.$emit('cell-click', row, column, cell, event)
     },
-    onCellDblclick(row, column, cell, event) {
+    onCellDblclick (row, column, cell, event) {
       this.$emit('cell-dblclick', row, column, cell, event)
     },
-    onRowClick(row, event, column) {
+    onRowClick (row, event, column) {
       this.$emit('row-click', row, event, column)
     },
-    onRowContextmenu(row, event) {
+    onRowContextmenu (row, event) {
       this.$emit('row-contextmenu', row, event)
     },
-    onRowDblclick(row, event) {
+    onRowDblclick (row, event) {
       this.$emit('row-dblclick', row, event)
     },
-    onHeaderClick(column, event) {
+    onHeaderClick (column, event) {
       this.$emit('header-click', column, event)
     },
-    onHeaderContextmenu(column, event) {
+    onHeaderContextmenu (column, event) {
       this.$emit('header-contextmenu', column, event)
     },
-    onSortChange({ column, prop, order }) {
+    onSortChange ({ column, prop, order }) {
       this.$emit('sort-change', { column, prop, order })
     },
-    onFilterChange(filters) {
+    onFilterChange (filters) {
       this.$emit('filter-change', filters)
     },
-    onCurrentRowChange(currentRow, oldCurrentRow) {
+    onCurrentRowChange (currentRow, oldCurrentRow) {
       this.$emit('current-change', currentRow, oldCurrentRow)
     },
-    onHeaderDragend(newWidth, oldWidth, column, event) {
+    onHeaderDragend (newWidth, oldWidth, column, event) {
       this.$emit('header-dragend', newWidth, oldWidth, column, event)
     },
-    onExpandChange(row, expandedRows) {
+    onExpandChange (row, expandedRows) {
       this.$emit('expand-change', row, expandedRows)
     },
 
     /*  分页器事件  */
-    onSizeChange(size) {
+    onSizeChange (size) {
       this.pageSize = size
       this.reloadData()
     },
 
-    onCurrentChange(page) {
+    onCurrentChange (page) {
       this.currentPage = page
       this.currentPage_ = page
       this.reloadData()
     },
 
-    onPrevClick(currentPage) {
+    onPrevClick (currentPage) {
       this.currentPage = currentPage
       this.currentPage_ = currentPage
       this.reloadData()
     },
 
-    onNextClick(currentPage) {
+    onNextClick (currentPage) {
       this.currentPage = currentPage
       this.currentPage_ = currentPage
       this.reloadData()
